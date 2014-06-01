@@ -1,0 +1,35 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+	<id>Bin</id>
+	<formats>
+		<format>war</format>
+	</formats>
+<!-- 	<dependencySets> -->
+<!-- 		<dependencySet> -->
+<!-- 			<outputDirectory>lib</outputDirectory> -->
+<!-- 		</dependencySet> -->
+<!-- 	</dependencySets> -->
+
+	<fileSets>
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>README.txt</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>target/classes</directory>
+			<outputDirectory>/WEB-INF/classes</outputDirectory>
+			<excludes>
+				<exclude>web.xml</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/webapp/WEB-INF</directory>
+			<outputDirectory>/WEB-INF/</outputDirectory>
+			<includes>
+				<include>web.xml</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

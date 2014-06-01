@@ -1,0 +1,27 @@
+<assembly>
+	<id>Bin</id>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>true</useProjectArtifact>
+			<outputDirectory>lib</outputDirectory>
+		</dependencySet>
+	</dependencySets>
+	<fileSets>
+		<fileSet>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>README.txt</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/WEB-INF</directory>
+			<outputDirectory>/WEB-INF</outputDirectory>
+			<includes>
+				<include>web.xml</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>

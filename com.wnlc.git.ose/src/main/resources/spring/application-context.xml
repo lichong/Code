@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+ <description>Spring公共配置文件</description>
+
+ <!-- 导入bean文件 -->
+ <import resource="classpath*:config/applicationContext-*.xml" />
+
+ <bean id="ICatalog" class="com.wnlc.git.ose.impl.Catalog"></bean>
+ <bean id="IContent" class="com.wnlc.git.ose.impl.Content"></bean>
+ 
+ 
+ <bean id="beanManager" class="com.wnlc.git.ose.mgmt.BeanManager">
+ 	<property name="beans">
+ 		<list>
+ 			<ref bean="ICatalog"/>
+ 			<ref bean="IContent"/>
+ 		</list>
+ 	</property>
+ </bean>
+</beans>
