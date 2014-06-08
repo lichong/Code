@@ -8,9 +8,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -30,7 +28,9 @@ import org.dom4j.io.SAXReader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.wnlc.git.ose.mgmt.BeanManager;
+import com.wnlc.git.bus.core.capability.CapabilityMgmt;
+import com.wnlc.git.bus.core.netty.handler.RemoteClientProxyHandler;
+import com.wnlc.git.user.Intf.IUser;
 
 public class OSEService extends HttpServlet
 {
@@ -40,8 +40,6 @@ public class OSEService extends HttpServlet
 	 * 
 	 */
 	private static final long serialVersionUID = 6388952991464503552L;
-
-	private static final Map<String, Object> beans = new ConcurrentHashMap<String, Object>();
 
 	private static final Set<Class<?>> primivateClazz = new HashSet<Class<?>>();
 	static
@@ -63,8 +61,7 @@ public class OSEService extends HttpServlet
 		super.init(config);
 		ServletContext application = getServletContext();
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(application);
-		BeanManager manager = (BeanManager) wac.getBean("beanManager");
-		beans.putAll(manager.getBeanMap());
+		CapabilityMgmt.getInstance().addBean(new RemoteClientProxyHandler<IUser>(IUser.class).getProxy());
 	}
 
 	@Override
@@ -105,8 +102,7 @@ public class OSEService extends HttpServlet
 
 				String methodName = root.getName();
 				LOGGER.info("Method:" + methodName);
-
-				Object bean = beans.get(intfName);
+				Object bean = CapabilityMgmt.getInstance().getBean(intfName);
 				Class<?> clazz = bean.getClass();
 				Method[] method = clazz.getDeclaredMethods();
 				Method targetMethod = null;

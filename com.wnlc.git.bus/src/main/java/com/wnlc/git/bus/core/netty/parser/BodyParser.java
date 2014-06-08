@@ -108,14 +108,16 @@ public class BodyParser
 					buff.readBytes(dest, 0, len);
 					args.add(new String(dest, 0, len));
 				}
-				mc.setArgs(args.toArray(new String[args.size()]));
+				mc.setArgsStr(args.toArray(new String[args.size()]));
 			}
 			else
 			{
 				len = buff.readInt();
 				dest = new byte[len];
 				buff.readBytes(dest, 0, len);
-				mc.setResult(new String(dest, 0, len));
+				Class<?> resultClazz = mc.getMethod().getReturnType();
+				Object result = GSON.fromJson(new String(dest, 0, len), resultClazz);
+				mc.setResult(result);
 			}
 
 			return mc;

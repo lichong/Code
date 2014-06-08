@@ -1,36 +1,32 @@
 package com.wnlc.git.ose.mgmt;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.wnlc.git.bus.core.capability.CapabilityMgmt;
+
 public class BeanManager
 {
-	private List<Object> beans = new ArrayList<Object>();
-
-	public List<Object> getBeans()
-	{
-		return beans;
-	}
+	private List<Object> beans;
 
 	public void setBeans(List<Object> beans)
 	{
 		this.beans = beans;
 	}
 
+	public void init()
+	{
+		for (Object bean : beans)
+		{
+			CapabilityMgmt.getInstance().addBean(bean);
+		}
+
+	}
+
 	public Map<String, Object> getBeanMap()
 	{
 		Map<String, Object> map = new ConcurrentHashMap<String, Object>();
-		for (Object bean : beans)
-		{
-			Class<?>[] clazzs = bean.getClass().getInterfaces();
-			for (Class<?> clazz : clazzs)
-			{
-				map.put(clazz.getSimpleName(), bean);
-			}
-		}
-
 		return map;
 
 	}

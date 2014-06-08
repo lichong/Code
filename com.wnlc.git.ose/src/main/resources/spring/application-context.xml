@@ -13,7 +13,7 @@
  <bean id="IContent" class="com.wnlc.git.ose.impl.Content"></bean>
  
  
- <bean id="beanManager" class="com.wnlc.git.ose.mgmt.BeanManager">
+ <bean id="beanManager" class="com.wnlc.git.ose.mgmt.BeanManager" init-method="init">
  	<property name="beans">
  		<list>
  			<ref bean="ICatalog"/>

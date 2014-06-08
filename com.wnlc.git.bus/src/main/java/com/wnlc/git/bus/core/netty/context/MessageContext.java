@@ -3,6 +3,7 @@ package com.wnlc.git.bus.core.netty.context;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class MessageContext
@@ -14,8 +15,10 @@ public class MessageContext
 	private byte[] rspMsg;
 	private String methodName;
 	private String intfName;
+	private String[] argsStr;
 	private Object[] args;
 	private Object result;
+	private Method method;
 
 	public ChannelHandlerContext getContext()
 	{
@@ -55,10 +58,14 @@ public class MessageContext
 		builder.append(methodName);
 		builder.append(", intfName=");
 		builder.append(intfName);
+		builder.append(", argsStr=");
+		builder.append(Arrays.toString(argsStr));
 		builder.append(", args=");
 		builder.append(Arrays.toString(args));
 		builder.append(", result=");
 		builder.append(result);
+		builder.append(", method=");
+		builder.append(method);
 		builder.append("]");
 		return builder.toString();
 	}
@@ -113,14 +120,14 @@ public class MessageContext
 		this.intfName = intfName;
 	}
 
-	public Object[] getArgs()
+	public String[] getArgsStr()
 	{
-		return args;
+		return argsStr;
 	}
 
-	public void setArgs(Object[] args)
+	public void setArgsStr(String[] args)
 	{
-		this.args = args;
+		this.argsStr = args;
 	}
 
 	public Object getResult()
@@ -131,5 +138,25 @@ public class MessageContext
 	public void setResult(Object result)
 	{
 		this.result = result;
+	}
+
+	public Method getMethod()
+	{
+		return method;
+	}
+
+	public void setMethod(Method method)
+	{
+		this.method = method;
+	}
+
+	public Object[] getArgs()
+	{
+		return args;
+	}
+
+	public void setArgs(Object[] args)
+	{
+		this.args = args;
 	}
 }

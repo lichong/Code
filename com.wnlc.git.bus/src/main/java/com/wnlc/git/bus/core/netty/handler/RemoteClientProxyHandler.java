@@ -39,6 +39,7 @@ public class RemoteClientProxyHandler<T> implements InvocationHandler
 		ConnectionManager.getInstance().addContext(mc);
 		mc.setMethodName(method.getName());
 		mc.setIntfName(target.getName());
+		mc.setMethod(method);
 
 		BodyParser.getInstance().sendMsg(mc, false, args);
 

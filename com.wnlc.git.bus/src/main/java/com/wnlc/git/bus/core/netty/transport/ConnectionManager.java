@@ -41,7 +41,7 @@ public class ConnectionManager
 	public List<ChannelHandlerContext> getConnection(String ip, int port)
 	{
 		List<ChannelHandlerContext> channels = connections.get(ip + ":" + port);
-		if (channels == null)
+		if (channels == null || channels.size() == 0)
 		{
 			channels = new ArrayList<ChannelHandlerContext>();
 			connections.put(ip + ":" + port, channels);
