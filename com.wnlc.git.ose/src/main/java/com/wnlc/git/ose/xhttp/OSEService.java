@@ -68,7 +68,16 @@ public class OSEService extends HttpServlet
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
 	{
 		LOGGER.info(req.getRequestURI());
-		String result = doExChangeStream(req);
+		String result = null;
+		try
+		{
+			result = doExChangeStream(req);
+		}
+		catch (Throwable e)
+		{
+			LOGGER.error("Catch an Exception:", e);
+			result = e.getMessage();
+		}
 		if (result != null)
 		{
 			resp.getWriter().write(result);
@@ -80,7 +89,7 @@ public class OSEService extends HttpServlet
 		}
 	}
 
-	private String doExChangeStream(HttpServletRequest req) throws IOException
+	private String doExChangeStream(HttpServletRequest req) throws Throwable
 	{
 		if (req.getContentType().contains("text/xml"))
 		{
@@ -146,8 +155,20 @@ public class OSEService extends HttpServlet
 					}
 				}
 				LOGGER.info("Args are " + Arrays.toString(args));
-				System.out.println();
-				Object result = targetMethod.invoke(bean, args);
+				Object result = null;
+				try
+				{
+					result = targetMethod.invoke(bean, args);
+				}
+				catch (Throwable e)
+				{
+					while (e.getCause() != null)
+					{
+						e = e.getCause();
+					}
+					LOGGER.error("Failed to invoke " + targetMethod.getName());
+					throw e;
+				}
 
 				JAXBContext context = JAXBContext.newInstance(targetMethod.getReturnType());
 				Marshaller m = context.createMarshaller();
@@ -155,9 +176,10 @@ public class OSEService extends HttpServlet
 				m.marshal(result, os);
 				return new String(os.toByteArray());
 			}
-			catch (Exception e)
+			catch (Throwable e)
 			{
-				e.printStackTrace();
+				LOGGER.error("Failed to doExChangeStream." + e.getMessage());
+				throw e;
 			}
 		}
 		LOGGER.error("The content-type of Req is not text/xml. Please check.");

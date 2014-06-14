@@ -1,4 +1,4 @@
-package com.wnlc.git.ose.mgmt;
+package com.wnlc.git.bus.core.mgmt;
 
 import java.util.List;
 import java.util.Map;
@@ -30,4 +30,5 @@ public class BeanManager
 		return map;
 
 	}
+
 }

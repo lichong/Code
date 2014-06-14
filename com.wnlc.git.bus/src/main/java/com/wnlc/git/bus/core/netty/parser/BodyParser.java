@@ -9,12 +9,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.wnlc.git.bus.core.netty.context.MessageContext;
 import com.wnlc.git.bus.core.netty.transport.ConnectionManager;
 
 public class BodyParser
 {
+	private static final Logger LOGGER = LogManager.getLogger(BodyParser.class);
 	private static BodyParser INSTANCE = new BodyParser();
 	private static Gson GSON = new Gson();
 
@@ -67,7 +71,14 @@ public class BodyParser
 			}
 		}
 
-		ctx.writeAndFlush(buf);
+		if (ctx.channel().isActive())
+		{
+			ctx.writeAndFlush(buf);
+		}
+		else
+		{
+			LOGGER.error("ctx is unactive.");
+		}
 	}
 
 	public MessageContext receiveMsg(MessageContext mc, ByteBuf buff, boolean server)
@@ -112,12 +123,15 @@ public class BodyParser
 			}
 			else
 			{
-				len = buff.readInt();
-				dest = new byte[len];
-				buff.readBytes(dest, 0, len);
-				Class<?> resultClazz = mc.getMethod().getReturnType();
-				Object result = GSON.fromJson(new String(dest, 0, len), resultClazz);
-				mc.setResult(result);
+				if (buff.readableBytes() > 0)
+				{
+					len = buff.readInt();
+					dest = new byte[len];
+					buff.readBytes(dest, 0, len);
+					Class<?> resultClazz = mc.getMethod().getReturnType();
+					Object result = GSON.fromJson(new String(dest, 0, len), resultClazz);
+					mc.setResult(result);
+				}
 			}
 
 			return mc;

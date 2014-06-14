@@ -7,11 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.wnlc.git.bus.core.netty.context.MessageContext;
 
 public class ConnectionManager
 {
 	private static ConnectionManager INSTANCE = new ConnectionManager();
+
+	private static final Logger LOGGER = LogManager.getLogger(ConnectionManager.class);
 
 	private final Map<String, List<ChannelHandlerContext>> connections = new ConcurrentHashMap<String, List<ChannelHandlerContext>>();
 
@@ -36,6 +41,17 @@ public class ConnectionManager
 		}
 		channels.add(channel);
 
+	}
+
+	public boolean removeChannel(String ip, int port, ChannelHandlerContext channel)
+	{
+		List<ChannelHandlerContext> channels = connections.get(ip + ":" + port);
+		if (channels != null)
+		{
+			LOGGER.info("Begin to remove channel:" + channel);
+			return channels.remove(channel);
+		}
+		return false;
 	}
 
 	public List<ChannelHandlerContext> getConnection(String ip, int port)

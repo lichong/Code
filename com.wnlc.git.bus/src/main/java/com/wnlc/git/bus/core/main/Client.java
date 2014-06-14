@@ -8,5 +8,7 @@ public class Client
 	{
 		ITest test = new RemoteClientProxyHandler<ITest>(ITest.class).getProxy();
 		System.out.println(test.test("test_arg", 100));
+		Thread.sleep(20000);
+		System.out.println(test.test("test_arg", 100));
 	}
 }

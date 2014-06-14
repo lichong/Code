@@ -23,8 +23,13 @@ public class RemoteClient
 
 	public void start() throws InterruptedException
 	{
+		connect(10);
+	}
+
+	public void connect(int count) throws InterruptedException
+	{
 		List<ChannelFuture> lst = new ArrayList<ChannelFuture>();
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < count; i++)
 		{
 			try
 			{
