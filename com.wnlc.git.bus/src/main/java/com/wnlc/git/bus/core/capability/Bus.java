@@ -13,6 +13,7 @@ public class Bus
 	private int port;
 	private String zookeeperAddr;
 	private String capName;
+	private String serverAddr;
 
 	private Bus()
 	{
@@ -27,8 +28,9 @@ public class Bus
 	{
 		RegistryMgmt registryMgmt = RegistryMgmt.getInstance();
 		registryMgmt.setZookeeperAddr(zookeeperAddr);
-		registryMgmt.init();
 		registryMgmt.setCapName(capName);
+		registryMgmt.init();
+		serverAddr = ip + ":" + port;
 
 		new RemoteServer(ip, port).start();
 	}
@@ -71,5 +73,10 @@ public class Bus
 	public void setCapName(String capName)
 	{
 		this.capName = capName;
+	}
+
+	public String getServerAddr()
+	{
+		return serverAddr;
 	}
 }

@@ -41,34 +41,38 @@ public class RegistryMgmt
 			LOGGER.info("There's no capability on zookeeper.");
 			return;
 		}
-		for (String child : children)
+		for (String capability : children)
 		{
-			List<String> hashs = client.getChildren(ROOT_PATH + "/" + child);
+			List<String> hashs = client.getChildren(ROOT_PATH + "/" + capability);
 			if (hashs == null)
 			{
-				LOGGER.info("There's no " + child + "'s hash on zookeeper.");
+				LOGGER.info("There's no " + capability + "'s hash on zookeeper.");
 				continue;
 			}
 			for (String hash : hashs)
 			{
-				List<String> ips = client.getChildren(ROOT_PATH + "/" + child + "/" + hash);
+				List<String> ips = client.getChildren(ROOT_PATH + "/" + capability + "/" + hash);
 				if (ips == null)
 				{
 					LOGGER.info("There's no " + hash + "'s ip on zookeeper.");
 					continue;
 				}
-				byte[] data = client.getData(ROOT_PATH + "/" + child + "/" + hash, true);
+				byte[] data = client.getData(ROOT_PATH + "/" + capability + "/" + hash, true);
 				if (data == null)
 				{
 					continue;
 				}
+				Capability cap = new Capability(capability, hash);
+				cap.setIps(ips);
+				CapabilityMgmt.getInstance().registerCap(cap);
+
 				String intfs = new String(data);
 				String[] intfArr = intfs.split(",");
 				for (String intf : intfArr)
 				{
 					try
 					{
-						CapabilityMgmt.getInstance().addRemoteBean(child, Class.forName(intf));
+						CapabilityMgmt.getInstance().addRemoteBean(capability, Class.forName(intf), ips);
 					}
 					catch (ClassNotFoundException e)
 					{

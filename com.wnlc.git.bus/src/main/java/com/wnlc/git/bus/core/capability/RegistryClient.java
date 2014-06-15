@@ -11,6 +11,7 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.zookeeper.CreateMode;
 
 public class RegistryClient
 {
@@ -53,6 +54,22 @@ public class RegistryClient
 	public void createNode(String path)
 	{
 		createNode(path, null);
+	}
+
+	public void createEphemeralNode(String path)
+	{
+		try
+		{
+			if (isExist(path))
+			{
+				deleteNode(path);
+			}
+			zkClient.create().withMode(CreateMode.EPHEMERAL).forPath(path);
+		}
+		catch (Exception e)
+		{
+			LOGGER.error("Failed to create EPHEMERAL Node." + path, e);
+		}
 	}
 
 	public void createNode(String path, byte[] val)

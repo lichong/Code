@@ -1,5 +1,7 @@
 package com.wnlc.git.bus.core.mgmt;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -8,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.wnlc.git.bus.core.capability.Bus;
 import com.wnlc.git.bus.core.capability.CapabilityMgmt;
 import com.wnlc.git.bus.core.capability.RegistryMgmt;
 
@@ -25,7 +28,7 @@ public class BeanManager
 	{
 		for (Object bean : beans)
 		{
-			CapabilityMgmt.getInstance().addBean(bean);
+			CapabilityMgmt.getInstance().addLocalBean(bean);
 		}
 		while (!RegistryMgmt.getInstance().isStarted())
 		{
@@ -39,8 +42,10 @@ public class BeanManager
 			}
 		}
 		Set<String> intfs = CapabilityMgmt.getInstance().getCapabilityIntfs();
+		List<String> intfLst = new ArrayList<String>(intfs);
+		Collections.sort(intfLst);
 		StringBuffer sb = new StringBuffer();
-		for (String intf : intfs)
+		for (String intf : intfLst)
 		{
 			sb.append(",").append(intf);
 		}
@@ -49,12 +54,12 @@ public class BeanManager
 		if (sb.length() > 0)
 		{
 			data = sb.substring(1).getBytes();
-			RegistryMgmt
-					.getInstance()
-					.getClient()
-					.createNode(
-							RegistryMgmt.ROOT_PATH + "/" + RegistryMgmt.getInstance().getCapName() + "/"
-									+ data.hashCode(), data);
+			StringBuffer path = new StringBuffer();
+			path.append(RegistryMgmt.ROOT_PATH).append("/").append(RegistryMgmt.getInstance().getCapName());
+			path.append("/").append(data.hashCode());
+			RegistryMgmt.getInstance().getClient().createNode(path.toString(), data);
+			path.append("/").append(Bus.getInstance().getServerAddr());
+			RegistryMgmt.getInstance().getClient().createEphemeralNode(path.toString());
 		};
 
 	}

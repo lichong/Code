@@ -8,7 +8,7 @@ public class Server
 {
 	public static void main(String[] args) throws InterruptedException
 	{
-		CapabilityMgmt.getInstance().addBean(new User());
+		CapabilityMgmt.getInstance().addLocalBean(new User());
 		new RemoteServer("127.0.0.1", 8090).start();
 	}
 }

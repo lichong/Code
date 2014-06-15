@@ -19,6 +19,7 @@ public class Init
 		bus.setIp(ip);
 		bus.setPort(port);
 		bus.setZookeeperAddr(zookeeperAddr);
+		bus.setCapName("OSE");
 
 		bus.start();
 	}
