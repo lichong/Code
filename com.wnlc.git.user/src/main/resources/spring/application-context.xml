@@ -13,6 +13,7 @@
  <bean id="Init" class="com.wnlc.git.user.mgmt.Init" init-method="init">
  	<property name="ip" value="127.0.0.1"></property>
  	<property name="port" value="8090"></property>
+ 	<property name="zookeeperAddr" value="127.0.0.1:2181"></property>
  </bean>
  
  

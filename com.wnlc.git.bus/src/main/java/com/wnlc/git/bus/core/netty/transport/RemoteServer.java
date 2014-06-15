@@ -7,10 +7,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.wnlc.git.bus.core.netty.handler.RemoteServerProxy;
 
 public class RemoteServer
 {
+	private static final Logger LOGGER = LogManager.getLogger(RemoteServer.class);
 	private int port;
 	private String ip;
 

@@ -11,6 +11,11 @@
 
  <bean id="ICatalog" class="com.wnlc.git.ose.impl.Catalog"></bean>
  <bean id="IContent" class="com.wnlc.git.ose.impl.Content"></bean>
+  <bean id="Init" class="com.wnlc.git.ose.mgmt.Init" init-method="init">
+ 	<property name="ip" value="127.0.0.1"></property>
+ 	<property name="port" value="8091"></property>
+ 	<property name="zookeeperAddr" value="127.0.0.1:2181"></property>
+ </bean>
  
  
  <bean id="beanManager" class="com.wnlc.git.bus.core.mgmt.BeanManager" init-method="init">

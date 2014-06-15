@@ -8,12 +8,16 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.wnlc.git.bus.core.netty.context.MessageContext;
 import com.wnlc.git.bus.core.netty.parser.BodyParser;
 import com.wnlc.git.bus.core.netty.transport.ConnectionManager;
 
 public class RemoteClientProxyHandler<T> implements InvocationHandler
 {
+	private static final Logger LOGGER = LogManager.getLogger(RemoteClientProxyHandler.class);
 	private Class<T> target;
 
 	public RemoteClientProxyHandler(Class<T> target)

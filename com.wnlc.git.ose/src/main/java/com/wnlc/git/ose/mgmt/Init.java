@@ -1,4 +1,4 @@
-package com.wnlc.git.user.mgmt;
+package com.wnlc.git.ose.mgmt;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +19,6 @@ public class Init
 		bus.setIp(ip);
 		bus.setPort(port);
 		bus.setZookeeperAddr(zookeeperAddr);
-		bus.setCapName("USER");
 
 		bus.start();
 	}

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.gson.Gson;
 import com.wnlc.git.bus.core.capability.CapabilityMgmt;
+import com.wnlc.git.bus.core.capability.ServiceBean;
 import com.wnlc.git.bus.core.netty.context.MessageContext;
 import com.wnlc.git.bus.core.netty.parser.BodyParser;
 
@@ -32,9 +33,9 @@ public class SrvThread implements Runnable
 			String intfName = mc.getIntfName();
 			String methodName = mc.getMethodName();
 			String[] argsStr = mc.getArgsStr();
-			Object bean = CapabilityMgmt.getInstance().getBean(intfName.substring(intfName.lastIndexOf(".") + 1));
+			ServiceBean bean = CapabilityMgmt.getInstance().getBean(intfName);
 			Method targetMethod = null;
-			Method[] ms = bean.getClass().getDeclaredMethods();
+			Method[] ms = bean.getClazz().getDeclaredMethods();
 			for (Method m : ms)
 			{
 				if (m.getName().equals(methodName))
@@ -51,7 +52,7 @@ public class SrvThread implements Runnable
 			}
 			mc.setArgs(args);
 
-			Object result = targetMethod.invoke(bean, args);
+			Object result = targetMethod.invoke(bean.getBean(), args);
 			// String rsp = "Invoke " + intfName + "." + methodName + "(" + (args == null ? "" : Arrays.toString(args))
 			// +
 			// ")";

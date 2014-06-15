@@ -14,9 +14,9 @@ import com.wnlc.git.bus.core.netty.context.MessageContext;
 
 public class ConnectionManager
 {
-	private static ConnectionManager INSTANCE = new ConnectionManager();
-
 	private static final Logger LOGGER = LogManager.getLogger(ConnectionManager.class);
+
+	private static ConnectionManager INSTANCE = new ConnectionManager();
 
 	private final Map<String, List<ChannelHandlerContext>> connections = new ConcurrentHashMap<String, List<ChannelHandlerContext>>();
 
