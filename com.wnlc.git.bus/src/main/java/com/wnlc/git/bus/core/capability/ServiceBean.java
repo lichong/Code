@@ -8,6 +8,7 @@ public class ServiceBean
 	private Class<?> clazz;
 	private Object bean;
 	private List<String> remoteAddr = new ArrayList<String>();
+	private String capName;
 
 	public Class<?> getClazz()
 	{
@@ -37,6 +38,32 @@ public class ServiceBean
 	public void setRemoteAddr(List<String> remoteAddr)
 	{
 		this.remoteAddr = remoteAddr;
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append("ServiceBean [clazz=");
+		builder.append(clazz);
+		builder.append(", bean=");
+		builder.append(bean);
+		builder.append(", remoteAddr=");
+		builder.append(remoteAddr);
+		builder.append(", capName=");
+		builder.append(capName);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	public String getCapName()
+	{
+		return capName;
+	}
+
+	public void setCapName(String capName)
+	{
+		this.capName = capName;
 	}
 
 }

@@ -19,6 +19,7 @@ public class MessageContext
 	private Object[] args;
 	private Object result;
 	private Method method;
+	private String remoteAddr;
 
 	public ChannelHandlerContext getContext()
 	{
@@ -158,5 +159,15 @@ public class MessageContext
 	public void setArgs(Object[] args)
 	{
 		this.args = args;
+	}
+
+	public String getRemoteAddr()
+	{
+		return remoteAddr;
+	}
+
+	public void setRemoteAddr(String remoteAddr)
+	{
+		this.remoteAddr = remoteAddr;
 	}
 }

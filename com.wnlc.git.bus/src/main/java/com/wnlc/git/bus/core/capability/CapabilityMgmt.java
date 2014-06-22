@@ -44,17 +44,21 @@ public class CapabilityMgmt
 			serviceBean.setClazz(clazz);
 			localBeans.put(clazz.getName(), serviceBean);
 		}
+		LOGGER.info("Add Local Beans Success." + bean.getClass());
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addRemoteBean(String capName, Class<?> intf, List<String> ips)
 	{
 		ServiceBean serviceBean = new ServiceBean();
 		serviceBean.setClazz(intf);
 		serviceBean.setRemoteAddr(ips);
+		serviceBean.setCapName(capName);
 		RemoteClientProxyHandler handler = new RemoteClientProxyHandler(intf);
 		handler.setBean(serviceBean);
 		serviceBean.setBean(handler.getProxy());
 		remoteBeans.put(capName + "." + intf.getSimpleName(), serviceBean);
+		LOGGER.info("Add Remote Beans Success." + capName + "." + intf);
 	}
 
 	public Set<String> getCapabilityIntfs()

@@ -1,4 +1,4 @@
-package com.wnlc.git.user.Intf;
+package com.wnlc.git.user.intf;
 
 import com.wnlc.git.user.vo.UserDetail;
 

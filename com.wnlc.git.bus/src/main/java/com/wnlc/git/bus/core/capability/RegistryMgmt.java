@@ -18,10 +18,12 @@ public class RegistryMgmt
 	private static RegistryMgmt INSTANCE = new RegistryMgmt();
 	private String zookeeperAddr;
 	private RegistryClient client;
+	private RegistryClient lockClient;
 	private boolean isStarted = false;
 	private String capName;
 
 	public static final String ROOT_PATH = "/com.wnlc.git";
+	private static final String LOCK_PATH = "/com.wnlc.lock";
 
 	private RegistryMgmt()
 	{
@@ -34,56 +36,119 @@ public class RegistryMgmt
 
 	private void initCapabilities()
 	{
-		LOGGER.info("Begin to Init all Capabilities.");
-		List<String> children = client.getChildren(ROOT_PATH);
-		if (children == null)
+		lockClient.getLock();
+		try
 		{
-			LOGGER.info("There's no capability on zookeeper.");
-			return;
-		}
-		for (String capability : children)
-		{
-			List<String> hashs = client.getChildren(ROOT_PATH + "/" + capability);
-			if (hashs == null)
+			LOGGER.info("Begin to Init all Capabilities.");
+			List<String> children = client.getChildren(ROOT_PATH);
+			if (children == null)
 			{
-				LOGGER.info("There's no " + capability + "'s hash on zookeeper.");
-				continue;
+				LOGGER.info("There's no capability on zookeeper.");
+				return;
 			}
-			for (String hash : hashs)
+			LOGGER.info("Begin to sync all capabilties:" + children);
+			for (String capability : children)
 			{
-				List<String> ips = client.getChildren(ROOT_PATH + "/" + capability + "/" + hash);
-				if (ips == null)
+				if (capability.equals(capName))
 				{
-					LOGGER.info("There's no " + hash + "'s ip on zookeeper.");
+					LOGGER.info("Current cap is the same as the node." + capability);
 					continue;
 				}
-				byte[] data = client.getData(ROOT_PATH + "/" + capability + "/" + hash, true);
-				if (data == null)
+				String currentPath = ROOT_PATH + "/" + capability;
+				List<String> hashs = client.getChildren(currentPath);
+				if (hashs == null)
 				{
+					LOGGER.info("There's no " + currentPath + "'s hash on zookeeper.");
 					continue;
 				}
-				Capability cap = new Capability(capability, hash);
-				cap.setIps(ips);
-				CapabilityMgmt.getInstance().registerCap(cap);
+				LOGGER.info("Hash of " + currentPath + " are as follows:" + hashs);
+				for (String hash : hashs)
+				{
+					currentPath += "/" + hash;
+					List<String> ips = client.getChildren(currentPath);
+					if (ips == null)
+					{
+						LOGGER.info("There's no " + currentPath + "'s ip on zookeeper.");
+						continue;
+					}
+					LOGGER.info("IPS of " + currentPath + " are as follows:" + ips);
+					byte[] data = client.getData(currentPath, true);
+					if (data == null)
+					{
+						LOGGER.info("Data of " + currentPath + " is null, igore this node.");
+						continue;
+					}
+					Capability cap = new Capability(capability, hash);
+					cap.setIps(ips);
+					CapabilityMgmt.getInstance().registerCap(cap);
 
-				String intfs = new String(data);
-				String[] intfArr = intfs.split(",");
-				for (String intf : intfArr)
-				{
-					try
+					String intfs = new String(data);
+					String[] intfArr = intfs.split(",");
+					for (String intf : intfArr)
 					{
-						CapabilityMgmt.getInstance().addRemoteBean(capability, Class.forName(intf), ips);
-					}
-					catch (ClassNotFoundException e)
-					{
-						LOGGER.error("Class Not Found:" + intf, e);
+						try
+						{
+							CapabilityMgmt.getInstance().addRemoteBean(capability, Class.forName(intf), ips);
+						}
+						catch (ClassNotFoundException e)
+						{
+							LOGGER.error("Class Not Found:" + intf, e);
+						}
 					}
 				}
 			}
+		}
+		finally
+		{
+			lockClient.releaseLock();
 		}
 	}
 
 	public void init()
+	{
+		initZKConClient();
+
+		initZKLockClient();
+
+		isStarted = true;
+		initCapabilities();
+	}
+
+	private void initZKLockClient()
+	{
+
+		lockClient = new RegistryClient(zookeeperAddr);
+		lockClient.setConnectionStateListener(new ConnectionStateListener() {
+
+			@Override
+			public void stateChanged(CuratorFramework arg0, ConnectionState state)
+			{
+				if (state == ConnectionState.RECONNECTED)
+				{
+					lockClient = new RegistryClient(zookeeperAddr);
+					lockClient.start();
+					lockClient.createNode(LOCK_PATH);
+				}
+				LOGGER.info("Lock state Changed:" + state);
+			}
+
+		});
+
+		lockClient.start();
+		lockClient.initLock(LOCK_PATH);
+	}
+
+	public void getLock()
+	{
+		lockClient.getLock();
+	}
+
+	public void releaseLock()
+	{
+		lockClient.releaseLock();
+	}
+
+	private void initZKConClient()
 	{
 		client = new RegistryClient(zookeeperAddr);
 		client.setConnectionStateListener(new ConnectionStateListener() {
@@ -112,21 +177,54 @@ public class RegistryMgmt
 					return;
 				}
 
-				String path = event.getWatchedEvent().getPath();
+				String path = watchEvent.getPath();
 				curator.getData().watched().forPath(path);
-				dealWithPath(path);
+				dealWithPath(watchEvent);
 			}
 
 		});
 		client.start();
 		client.createNode(ROOT_PATH);
-		isStarted = true;
-		initCapabilities();
 	}
 
-	private void dealWithPath(String path)
+	private void dealWithPath(WatchedEvent watchEvent)
 	{
-		LOGGER.info("Begin to deal with Path:" + path);
+		LOGGER.info("Begin to deal with Event:" + watchEvent);
+		String path = watchEvent.getPath();
+		PathInfo info = analysePath(path);
+		switch (watchEvent.getType())
+		{
+			case NodeCreated:
+				break;
+			case NodeDeleted:
+				break;
+			case NodeDataChanged:
+				initCapabilities();
+				break;
+			case NodeChildrenChanged:
+				initCapabilities();
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	private PathInfo analysePath(String path)
+	{
+		PathInfo info = new PathInfo();
+		int depth = 0;
+
+		for (int i = 0; i < path.length(); i++)
+		{
+			if (path.charAt(i) == '/')
+			{
+				depth++;
+			}
+		}
+		info.setDepth(depth);
+		info.setPath(path);
+		return info;
 	}
 
 	public String getZookeeperAddr()

@@ -19,6 +19,9 @@ public class ServerChannelHandler extends ChannelInboundHandlerAdapter
 		MessageContext mc = new MessageContext();
 		mc.setContext(ctx);
 		mc.setBuf((ByteBuf) msg);
+		mc.setRemoteAddr(ctx.channel().remoteAddress().toString());
+
+		LOGGER.info("Receive a msg from remote client." + mc.getRemoteAddr());
 
 		RemoteServerProxy.getInstance().dispatch(mc);
 	}

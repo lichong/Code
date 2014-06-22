@@ -14,6 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.wnlc.git.bus.core.capability.ServiceBean;
+import com.wnlc.git.bus.core.constant.Constant;
+import com.wnlc.git.bus.core.mgmt.exception.BusException;
 import com.wnlc.git.bus.core.netty.context.MessageContext;
 import com.wnlc.git.bus.core.netty.parser.BodyParser;
 import com.wnlc.git.bus.core.netty.transport.ConnectionManager;
@@ -33,14 +35,17 @@ public class RemoteClientProxyHandler<T> implements InvocationHandler
 	@SuppressWarnings("unchecked")
 	public T getProxy()
 	{
-		return (T) Proxy.newProxyInstance(target.getClassLoader(), new Class[]
-		{ target }, this);
+		return (T) Proxy.newProxyInstance(target.getClassLoader(), new Class[] { target }, this);
 	}
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
 		List<String> ips = bean.getRemoteAddr();
+		if (ips == null || ips.isEmpty())
+		{
+			throw new BusException(Constant.NO_PROVIDER, "No Provider for cap " + bean.getCapName());
+		}
 		String ipport = ips.get(random.nextInt(ips.size()));
 		String addr[] = ipport.split(":");
 		LOGGER.info("RemoteAddr:" + Arrays.toString(addr));

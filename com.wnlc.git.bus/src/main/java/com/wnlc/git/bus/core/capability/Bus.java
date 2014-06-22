@@ -31,6 +31,7 @@ public class Bus
 		registryMgmt.setCapName(capName);
 		registryMgmt.init();
 		serverAddr = ip + ":" + port;
+		LOGGER.info("Start bus on " + serverAddr);
 
 		new RemoteServer(ip, port).start();
 	}

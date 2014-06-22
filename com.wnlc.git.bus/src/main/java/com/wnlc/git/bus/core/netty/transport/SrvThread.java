@@ -27,6 +27,7 @@ public class SrvThread implements Runnable
 	{
 		BodyParser.getInstance().receiveMsg(mc, mc.getBuf(), true);
 
+		LOGGER.info("Receive a msg from remote client." + mc.getRemoteAddr());
 		try
 		{
 			System.out.println(mc);

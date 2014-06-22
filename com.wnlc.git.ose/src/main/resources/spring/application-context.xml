@@ -9,8 +9,6 @@
  <!-- 导入bean文件 -->
  <import resource="classpath*:config/applicationContext-*.xml" />
 
- <bean id="ICatalog" class="com.wnlc.git.ose.impl.Catalog"></bean>
- <bean id="IContent" class="com.wnlc.git.ose.impl.Content"></bean>
   <bean id="Init" class="com.wnlc.git.ose.mgmt.Init" init-method="init">
  	<property name="ip" value="127.0.0.1"></property>
  	<property name="port" value="8091"></property>
@@ -19,11 +17,5 @@
  
  
  <bean id="beanManager" class="com.wnlc.git.bus.core.mgmt.BeanManager" init-method="init">
- 	<property name="beans">
- 		<list>
- 			<ref bean="ICatalog"/>
- 			<ref bean="IContent"/>
- 		</list>
- 	</property>
  </bean>
 </beans>

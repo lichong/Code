@@ -9,7 +9,7 @@
  <!-- 导入bean文件 -->
  <import resource="classpath*:config/applicationContext-*.xml" />
 
- <bean id="IUser" class="com.wnlc.git.user.Impl.User"></bean>
+ <bean id="IUser" class="com.wnlc.git.user.impl.User"></bean>
  <bean id="Init" class="com.wnlc.git.user.mgmt.Init" init-method="init">
  	<property name="ip" value="127.0.0.1"></property>
  	<property name="port" value="58090"></property>

@@ -30,6 +30,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.wnlc.git.bus.core.capability.CapabilityMgmt;
 import com.wnlc.git.bus.core.capability.ServiceBean;
+import com.wnlc.git.ose.constant.Constant;
+import com.wnlc.git.ose.xhttp.exception.GitException;
 
 public class OSEService extends HttpServlet
 {
@@ -111,6 +113,10 @@ public class OSEService extends HttpServlet
 				LOGGER.info("Method:" + methodName);
 				LOGGER.info("~~~~~~~~~~~~~~~~~" + CapabilityMgmt.getInstance().getCapabilityIntfs());
 				ServiceBean bean = CapabilityMgmt.getInstance().getBean(intfName);
+				if (bean == null)
+				{
+					throw new GitException(Constant.NO_SUCH_CAP, "No Such Cap:" + intfName);
+				}
 				Class<?> clazz = bean.getClazz();
 				Method[] method = clazz.getDeclaredMethods();
 				Method targetMethod = null;

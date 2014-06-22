@@ -2,28 +2,28 @@
 <Configuration status="WARN">
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level - %msg %logger{36}"/>
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}|%p|%t| %m %l%n"/>
     </Console>
-    <File name="user_log" fileName="${catalina.base}/logs/user.log">
+    <File name="user_log" fileName="../logs/user.log">
       <PatternLayout>
-        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%p|%t| %m %l%n</Pattern>
       </PatternLayout>
     </File>
-    <File name="bus_log" fileName="${catalina.base}/logs/bus.log">
+    <File name="bus_log" fileName="../logs/bus.log">
       <PatternLayout>
-        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}|%p|%t| %m %l%n</Pattern>
       </PatternLayout>
     </File>
   </Appenders>
   <Loggers>
-  	<logger name="com.wnlc.git.user" level="INFO">
+  	<Logger name="com.wnlc.git.user" level="INFO">
   		 <AppenderRef ref="user_log"/>
-  	</logger>
+  	</Logger>
+  	<Logger name="com.wnlc.git.bus" level="INFO">
+  		 <AppenderRef ref="bus_log"/>
+  	</Logger>
     <Root level="INFO">
       <AppenderRef ref="Console"/>
     </Root>
-  	<logger name="com.wnlc.git.bus" level="INFO">
-  		 <AppenderRef ref="bus_log"/>
-  	</logger>
   </Loggers>
 </Configuration>

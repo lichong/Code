@@ -1,9 +1,9 @@
-package com.wnlc.git.user.Impl;
+package com.wnlc.git.user.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.wnlc.git.user.Intf.IUser;
+import com.wnlc.git.user.intf.IUser;
 import com.wnlc.git.user.vo.UserDetail;
 
 public class User implements IUser
